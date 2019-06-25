@@ -13,7 +13,7 @@
             <el-input v-model="homeForm.code" placeholder="验证码"></el-input>
           </el-col>
           <el-col :span="9">
-            <el-button type="primary" @click="handleSubmit" :disabled="!!codeTimer">{{ !!codeTimer ? `剩余${codeSeconds}秒` : '发送验证码'}}</el-button>
+            <el-button type="primary" @click="handleSubmit" :disabled="!!codeTimer">{{ codeTimer ? `剩余${codeSeconds}秒` : '发送验证码'}}</el-button>
           </el-col>
         </el-form-item>
         <el-form-item prop="agree">
@@ -34,8 +34,10 @@
 
 <script>
 import axios from "axios"
+import { saveUser } from '@/utils/auth'
 const codeTimes = 60
 export default {
+  name: 'login',
   data() {
     return {
       homeForm: {
@@ -46,11 +48,11 @@ export default {
       rules: {
         mobile: [
           { required: true, message: "请输入手机号码", trigger: "blur" },
-          { len: 11, message: "请输入有效的手机号码", trigger: "blur" }
+          { pattern: /\d{11}/, message: "请输入有效的手机号码", trigger: "blur" }
         ],
         code: [
           { required: true, message: "请输入验证码", trigger: "blur" },
-          { len: 6, message: "验证码长度错误", trigger: "blur" }
+          { pattern: /\d{6}/, message: "验证码长度错误", trigger: "blur" }
         ],
         agree: [
           { required: true, message: "请阅读并签订协议" },
@@ -89,7 +91,7 @@ export default {
                   captchaObj.verify();
                 })
                 .onSuccess(() => {
-                  this.codeSecondsTime()
+                  this.codeCountDown()
                   const {
                     geetest_challenge: challenge,
                     geetest_validate: validate,
@@ -106,9 +108,9 @@ export default {
                   }).then(res => {
                     console.log(res.data)
                     
-                  });
+                  })
                 })
-                .onError(function() {});
+                .onError(function() {})
             }
           );
         });
@@ -132,15 +134,14 @@ export default {
             message: "登陆成功",
             type: "success"
           })
-          const userInfo = JSON.stringify(res.data.data)
-          window.localStorage.setItem('userInfo', userInfo)
+          saveUser(res.data.data)
           this.$router.push("./")
         })
         .catch(err => {
           this.$message.error("登录失败，手机号或验证码错误");
-        });
+        })
     },
-    codeSecondsTime () {
+    codeCountDown () {
       this.codeTimer = window.setInterval( () => {
         this.codeSeconds --
         if(this.codeSeconds === 0) {
@@ -156,6 +157,7 @@ export default {
 
 <style lang="less" scoped>
 .home {
+  background: url("./assets/index-bg.jpg");
   display: flex;
   justify-content: center;
   align-items: center;

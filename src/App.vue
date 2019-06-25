@@ -5,9 +5,12 @@
 </template>
 
 <script>
-import home from '@/views/About.vue'
+import layout from '@/views/layout'
 export default {
-  
+  name: 'layout1',
+  data () {
+    return {}
+  }
 }
 </script>
 
@@ -15,11 +18,10 @@ export default {
 #app {
   width: 100%;
   height: 100%;
-  background: url("./assets/index-bg.jpg");
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  // text-align: center;
   color: #2c3e50;
 }
 #nav {
