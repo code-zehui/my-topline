@@ -11,15 +11,16 @@
       text-color="#fff"
       active-text-color="#ffd04b"
       :unique-opened="true"
+      :router="true"
     >
-      <el-menu-item index="1">
+      <el-menu-item index="/">
         <span slot="title">首页</span>
       </el-menu-item>
       <el-submenu index="2">
         <template slot="title">
           <span>内容管理</span>
         </template>
-          <el-menu-item index="2-1">发布文章</el-menu-item>
+          <el-menu-item index="/publish">发布文章</el-menu-item>
           <el-menu-item index="2-2">内容列表</el-menu-item>
           <el-menu-item index="2-3">评论列表</el-menu-item>
           <el-menu-item index="2-4">素材管理</el-menu-item>
@@ -42,19 +43,19 @@
 
 <script>
 export default {
-  name: "AppAsile",
-  data() {
-    return {};
+  name: 'AppAsile',
+  data () {
+    return {}
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+    handleOpen (key, keyPath) {
+      console.log(key, keyPath)
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    handleClose (key, keyPath) {
+      console.log(key, keyPath)
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
   .aside {
@@ -74,4 +75,3 @@ export default {
     }
   }
 </style>
-

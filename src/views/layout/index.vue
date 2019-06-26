@@ -19,7 +19,7 @@ import AppHeader from './components/AppHeader'
 import AppAside from './components/AppAside'
 export default {
   name: 'AppLayout',
-  data() {
+  data () {
     return {}
   },
   components: {
@@ -37,7 +37,6 @@ export default {
       .grid-content {
         text-align: left;
       }
-      
     }
     .el-main {
         background: #f2f3f5;

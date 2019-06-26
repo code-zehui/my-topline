@@ -33,64 +33,62 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from 'axios'
 import { saveUser } from '@/utils/auth'
 const codeTimes = 60
 export default {
   name: 'login',
-  data() {
+  data () {
     return {
       homeForm: {
-        mobile: "",
-        code: "",
-        agree: ""
+        mobile: '',
+        code: '',
+        agree: ''
       },
       rules: {
         mobile: [
-          { required: true, message: "请输入手机号码", trigger: "blur" },
-          { pattern: /\d{11}/, message: "请输入有效的手机号码", trigger: "blur" }
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { pattern: /\d{11}/, message: '请输入有效的手机号码', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: "请输入验证码", trigger: "blur" },
-          { pattern: /\d{6}/, message: "验证码长度错误", trigger: "blur" }
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { pattern: /\d{6}/, message: '验证码长度错误', trigger: 'blur' }
         ],
         agree: [
-          { required: true, message: "请阅读并签订协议" },
-          { pattern: /true/, message: '请阅读并签订协议'}
+          { required: true, message: '请阅读并签订协议' },
+          { pattern: /true/, message: '请阅读并签订协议' }
         ]
       },
       codeSeconds: codeTimes,
       codeTimer: null
-    };
+    }
   },
 
   methods: {
-    handleSubmit() {
-      const { mobile } = this.homeForm;
-      this.$refs.homeForm.validateField("mobile", valid => {
+    handleSubmit () {
+      const { mobile } = this.homeForm
+      this.$refs.homeForm.validateField('mobile', valid => {
         if (valid) {
-          return false;
+          return false
         }
-        
         axios({
-          method: "GET",
-          url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
+          method: 'GET',
+          url: `http://toutiao.course.itcast.cn/mp/v1_0/captchas/${mobile}`
         }).then(res => {
-          const { data } = res.data;
+          const { data } = res.data
           window.initGeetest(
             {
               gt: data.gt,
               challenge: data.challenge,
               offline: !data.success,
               new_captcha: data.new_captcha,
-              product: "bind"
+              product: 'bind'
             },
             captchaObj => {
               captchaObj
                 .onReady(() => {
-                  captchaObj.verify();
-                })
-                .onSuccess(() => {
+                  captchaObj.verify()
+                }).onSuccess(() => {
                   this.codeCountDown()
                   const {
                     geetest_challenge: challenge,
@@ -98,8 +96,8 @@ export default {
                     geetest_seccode: seccode
                   } = captchaObj.getValidate()
                   axios({
-                    method: "GET",
-                    url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+                    method: 'GET',
+                    url: `http://toutiao.course.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
                     params: {
                       challenge,
                       validate,
@@ -107,44 +105,40 @@ export default {
                     }
                   }).then(res => {
                     console.log(res.data)
-                    
                   })
-                })
-                .onError(function() {})
+                }).onError(() => {})
             }
-          );
-        });
-      });
+          )
+        })
+      })
     },
-    handleLogin() {
-      this.$refs["homeForm"].validate(valid => {
+    handleLogin () {
+      this.$refs['homeForm'].validate(valid => {
         if (!valid) {
-          return false;
+          return false
         }
-      });
+      })
 
       axios({
-        method: "POST",
-        url: "http://ttapi.research.itcast.cn/mp/v1_0/authorizations",
-        ContentType: "application/json",
+        method: 'POST',
+        url: 'http://toutiao.course.itcast.cn/mp/v1_0/authorizations',
+        ContentType: 'application/json',
         data: this.homeForm
+      }).then(res => {
+        this.$message({
+          message: '登陆成功',
+          type: 'success'
+        })
+        saveUser(res.data.data)
+        this.$router.push('/')
+      }).catch(() => {
+        this.$message.error('登录失败，手机号或验证码错误')
       })
-        .then(res => {
-          this.$message({
-            message: "登陆成功",
-            type: "success"
-          })
-          saveUser(res.data.data)
-          this.$router.push("./")
-        })
-        .catch(err => {
-          this.$message.error("登录失败，手机号或验证码错误");
-        })
     },
     codeCountDown () {
-      this.codeTimer = window.setInterval( () => {
-        this.codeSeconds --
-        if(this.codeSeconds === 0) {
+      this.codeTimer = window.setInterval(() => {
+        this.codeSeconds--
+        if (this.codeSeconds === 0) {
           window.clearInterval(this.codeTimer)
           this.codeTimer = null
           this.codeSeconds = codeTimes
@@ -152,7 +146,7 @@ export default {
       }, 1000)
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -195,4 +189,3 @@ export default {
   }
 }
 </style>
-

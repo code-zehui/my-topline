@@ -5,9 +5,8 @@
 </template>
 
 <script>
-import layout from '@/views/layout'
 export default {
-  name: 'layout1',
+  name: 'layout',
   data () {
     return {}
   }
@@ -21,7 +20,6 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  // text-align: center;
   color: #2c3e50;
 }
 #nav {
