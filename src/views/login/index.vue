@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { saveUser } from '@/utils/auth'
 const codeTimes = 60
 export default {
@@ -41,9 +40,9 @@ export default {
   data () {
     return {
       homeForm: {
-        mobile: '',
-        code: '',
-        agree: ''
+        mobile: '15010155243',
+        code: '246810',
+        agree: true
       },
       rules: {
         mobile: [
@@ -71,11 +70,11 @@ export default {
         if (valid) {
           return false
         }
-        axios({
+        this.$http({
           method: 'GET',
-          url: `http://toutiao.course.itcast.cn/mp/v1_0/captchas/${mobile}`
+          url: `/captchas/${mobile}`
         }).then(res => {
-          const { data } = res.data
+          const data = res
           window.initGeetest(
             {
               gt: data.gt,
@@ -95,16 +94,16 @@ export default {
                     geetest_validate: validate,
                     geetest_seccode: seccode
                   } = captchaObj.getValidate()
-                  axios({
+                  this.$http({
                     method: 'GET',
-                    url: `http://toutiao.course.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+                    url: `/sms/codes/${mobile}`,
                     params: {
                       challenge,
                       validate,
                       seccode
                     }
                   }).then(res => {
-                    console.log(res.data)
+                    console.log(res)
                   })
                 }).onError(() => {})
             }
@@ -119,9 +118,9 @@ export default {
         }
       })
 
-      axios({
+      this.$http({
         method: 'POST',
-        url: 'http://toutiao.course.itcast.cn/mp/v1_0/authorizations',
+        url: '/authorizations',
         ContentType: 'application/json',
         data: this.homeForm
       }).then(res => {
@@ -129,7 +128,7 @@ export default {
           message: '登陆成功',
           type: 'success'
         })
-        saveUser(res.data.data)
+        saveUser(res)
         this.$router.push('/')
       }).catch(() => {
         this.$message.error('登录失败，手机号或验证码错误')

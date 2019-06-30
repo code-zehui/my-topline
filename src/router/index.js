@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Layout from '@/views/layout'
-
+import nprogress from 'nprogress'
+import { getUser } from '@/utils/auth'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
-      component: Layout,
+      component: () => import('@/views/layout'),
       children: [
         {
           path: '',
@@ -16,9 +16,19 @@ export default new Router({
           component: () => import('@/views/home')
         },
         {
-          path: '/publish',
+          path: 'publish',
           name: 'publish',
           component: () => import('@/views/publish')
+        },
+        {
+          path: 'publish:id',
+          name: 'publish-edit',
+          component: () => import('@/views/publish')
+        },
+        {
+          path: 'articleList',
+          name: 'articleList',
+          component: () => import('@/views/articleList')
         }
       ]
     },
@@ -29,3 +39,31 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  nprogress.start()
+  const userInfo = getUser()
+  if (to.path !== '/login') {
+    if (!userInfo) {
+      if (from.path === '/login') {
+        nprogress.done()
+      }
+      next({ name: 'login' })
+    } else {
+      next()
+    }
+  } else {
+    if (!userInfo) {
+      next()
+    } else {
+      next({ name: 'home' })
+      window.location.reload()
+    }
+  }
+})
+
+router.afterEach((to, from) => {
+  nprogress.done()
+})
+
+export default router

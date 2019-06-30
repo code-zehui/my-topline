@@ -23,9 +23,8 @@
   </el-row>
 </template>
 <script>
-// const userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
 import { getUser, removeUser } from '@/utils/auth'
-const userInfo = getUser();
+const userInfo = getUser()
 export default {
   data () {
     return {
@@ -44,12 +43,12 @@ export default {
           type: 'success',
           message: '成功退出!'
         })
-        this.$router.push({name: 'login'})
+        this.$router.push({ name: 'login' })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消退出'
-        })       
+        })
       })
     }
   }
@@ -83,5 +82,3 @@ export default {
   }
 }
 </style>
-
-
